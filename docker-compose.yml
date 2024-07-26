@@ -1,0 +1,17 @@
+version: "2.4"
+
+services:
+  prtgmpprobe:
+    build: .
+    image: paessler/multi-platform-probe:latest
+    restart: unless-stopped
+
+    network_mode: "bridge"
+
+    volumes:
+      - ./scripts:/opt/paessler/share/scripts:ro
+      - ./config:/config
+
+    cap_add:
+      - NET_ADMIN # for gosu and icmp
+      - NET_RAW   # for icmp

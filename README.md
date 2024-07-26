@@ -65,11 +65,14 @@ nats:
     password: PASSWORD
 ```
 
-You must put it into the `/config/config.yml` volume of the docker container.
+You must put the configuration file into the `/config/config.yml` volume of the docker container.
 
-Another volume `/opt/paessler/share/scripts` is available for the scripts of the [Script v2][prtgmanual:scriptv2] sensor.
+ℹ️ The  container also used the `/config` volume to store the [multi-platform probe's GID][GID] and therefore cannot be set as read-only (`:ro`) unless you specify the GID as an environment variable.
 
-[prtgmanual:scriptv2]: https://www.paessler.com/br/manuals/prtg/script_v2_sensor
+You can also use the `/opt/paessler/share/scripts` volume for the scripts of the [Script v2][prtgmanual:scriptv2] sensor.
+
+[prtgmanual:scriptv2]: https://www.paessler.com/manuals/prtg/script_v2_sensor
+[GID]: https://www.paessler.com/manuals/prtg/prtg_administration_tool_on_remote_probe_systems#:~:text=GID
 
 ```sh
 docker run -it \
@@ -82,6 +85,17 @@ docker run -it \
 ```
 
 You can also use `docker-compose`. There is an example file here: [docker-compose.yml](docker-compose.yml)
+
+### Customization
+
+The multi-platform probe container supports all safe environment variables which are environment variables which do not contain secrets.
+While the container provides some defaults, we recommend that you change the following environment variables to your liking:
+
+| Environment Variable | Description | Default |
+|--|--|--|
+| `PRTGMPPROBE__NAME` | The name of the object shown in PRTG. | `multi-platform-probe@$(hostname)` |
+| `PRTGMPPROBE__ID` | The GID of the multi-platform probe. This must be a valid UUIDv4. The container automatically generates the GID when you create it and stores the GID in the `/config` volume. If you want to ensure that you always get the same UUIDv4, then we recommend that you use `uuidgen(1)` with a unique DNS string for your container, e.g. `uuidgen --namespace @dns --name com.paesslerfans.containers.acme --sha1`. | Randomly generated on the first run. |
+
 
 ## Feedback and issues
 

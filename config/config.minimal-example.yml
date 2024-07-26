@@ -1,0 +1,6 @@
+access_key: YOUR_SUPER_SECRET_ACCESS_KEY
+nats:
+  url: tls://localhost:23561
+  authentication:
+    user: USER
+    password: PASSWORD

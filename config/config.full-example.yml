@@ -1,0 +1,29 @@
+id: 0f2dcfe4-3ea4-4fd8-99d1-f22bd923544a
+access_key: YOUR_SUPER_SECRET_ACCESS_KEY
+name: multi-platform-probe@HOSTNAME
+max_scheduling_delay: 300
+heartbeat_interval: 30
+nats:
+  url: tls://localhost:23561
+  authentication:
+    user: USER
+    password: PASSWORD
+  request_timeout: 15
+  server_ca: /config/certs/example-ca.crt
+  client_name: ClientName (displayed on NATS Server)
+momo:
+  dir: MonitoringModules/
+  timeout: 900
+logging:
+  console:
+    level: info
+    without_time: false
+  journald:
+    level: off
+    field_prefix: PRTGMPPROBE
+observability:
+  enable_endpoint: true
+  endpoint:
+    interface: localhost
+    port: 23562
+  process_check_interval: 10

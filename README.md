@@ -80,7 +80,7 @@ docker run -it \
   -v ./scripts:/opt/paessler/share/scripts:ro \
   -v ./config:/config \
   --cap-add NET_ADMIN \
-  --cap-add NET_RAW
+  --cap-add NET_RAW \
   paessler/multi-platform-probe:latest
 ```
 

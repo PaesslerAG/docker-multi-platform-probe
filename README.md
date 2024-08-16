@@ -66,6 +66,7 @@ nats:
 ```
 
 You must put the configuration file into the `/config/config.yml` volume of the docker container.
+For all available configuration options, see [config.full-example.yml](./config/config.full-example.yml).
 
 ℹ️ The  container also used the `/config` volume to store the [multi-platform probe's GID][GID] and therefore cannot be set as read-only (`:ro`) unless you specify the GID as an environment variable.
 

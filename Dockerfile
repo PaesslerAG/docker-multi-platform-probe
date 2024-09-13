@@ -57,4 +57,5 @@ VOLUME [ "/config", "/opt/paessler/share/scripts" ]
 # set WORKDIR to a sane default
 WORKDIR /
 
-ENTRYPOINT [ "/run-prtgmpprobe.sh", "service-run" ]
+ENTRYPOINT [ "/run-prtgmpprobe.sh" ]
+CMD [ "service-run" ]

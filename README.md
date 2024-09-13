@@ -66,12 +66,26 @@ nats:
 ```
 
 You must put the configuration file into the `/config/config.yml` volume of the docker container.
+For all available configuration options, see [config.full-example.yml](./config/config.full-example.yml).
 
-ℹ️ The  container also used the `/config` volume to store the [multi-platform probe's GID][GID] and therefore cannot be set as read-only (`:ro`) unless you specify the GID as an environment variable.
+ℹ️ If necessary you can put your custom [CA certificate][TLS] into `/config/certs` and specify it in the `/config/config.yml` as well:
+
+```yaml
+access_key: YOUR_PROBE_ACCESS_KEY
+nats:
+  url: tls://localhost:23561
+  authentication:
+    user: USER
+    password: PASSWORD
+  server_ca: /config/certs/ca.crt
+```
+
+ℹ️ The container also used the `/config` volume to store the [multi-platform probe's GID][GID] and therefore cannot be set as read-only (`:ro`) unless you specify the [multi-platform probe's GID][GID] as an environment variable.
 
 You can also use the `/opt/paessler/share/scripts` volume for the scripts of the [Script v2][prtgmanual:scriptv2] sensor.
 
 [prtgmanual:scriptv2]: https://www.paessler.com/manuals/prtg/script_v2_sensor
+[TLS]: https://kb.paessler.com/en/topic/91877-how-can-i-create-a-tls-certificate
 [GID]: https://www.paessler.com/manuals/prtg/prtg_administration_tool_on_remote_probe_systems#:~:text=GID
 
 ```sh

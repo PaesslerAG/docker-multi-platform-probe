@@ -18,7 +18,7 @@ do
         ;;
     esac
 done
-if [ ! $_passthrough -eq 0 ] ; then
+if [ $_passthrough -neq 0 ] ; then
     exec gosu paessler_mpprobe:paessler_mpprobe \
         ${PRTGMPPROBE__BINARY} \
         "$@"
@@ -42,19 +42,29 @@ done
 
 # Handling Env vars
 
-# Get/Generate a probe id from PRTGMPPROBE__ID_FILE or from PRTGMPPROBE__ID
-if [ -z "${PRTGMPPROBE__ID-}" ] ; then
-    if [ ! -f "${PRTGMPPROBE__ID_FILE}" ] ; then
-        cat /proc/sys/kernel/random/uuid > ${PRTGMPPROBE__ID_FILE} || (
-            error "Unable to write to ${PRTGMPPROBE__ID_FILE}. Please either set PRTGMPPROBE__ID in the container environment or make sure the location ${PRTGMPPROBE__ID_FILE} is writable."
-            echo >&2 " "
-            echo >&2 "Example:"
-            echo >&2 "PRTGMPPROBE__ID=$(cat /proc/sys/kernel/random/uuid)"
-            exit 1
-        )
+if [ ! -f "${PRTGMPPROBE__CONFIG_FILE}" ] ; then
+    error "Configuration file ${PRTGMPPROBE__CONFIG_FILE} does not exist. Please create one."
+    echo >&2 " "
+    echo >&2 "Example:"
+    ${PRTGMPPROBE__BINARY} example-config >&2
+    exit 1
+fi
+
+# Get/Generate a probe id from PRTGMPPROBE__ID_FILE or from PRTGMPPROBE__ID if not set in PRTGMPPROBE__CONFIG_FILE
+if [ ! grep -q "^id:" "${PRTGMPPROBE__CONFIG_FILE}" ] ; then
+    if [ -z "${PRTGMPPROBE__ID-}" ] ; then
+        if [ ! -f "${PRTGMPPROBE__ID_FILE}" ] ; then
+            cat /proc/sys/kernel/random/uuid > ${PRTGMPPROBE__ID_FILE} || (
+                error "Unable to write to ${PRTGMPPROBE__ID_FILE}. Please either set PRTGMPPROBE__ID in the container environment, 'id:' in the ${PRTGMPPROBE__CONFIG_FILE} or make sure the location ${PRTGMPPROBE__ID_FILE} is writable."
+                echo >&2 " "
+                echo >&2 "Example:"
+                echo >&2 "PRTGMPPROBE__ID=$(cat /proc/sys/kernel/random/uuid)"
+                exit 1
+            )
+        fi
+        PRTGMPPROBE__ID=$(cat ${PRTGMPPROBE__ID_FILE})
+        export PRTGMPPROBE__ID
     fi
-    PRTGMPPROBE__ID=$(cat ${PRTGMPPROBE__ID_FILE})
-    export PRTGMPPROBE__ID
 fi
 
 export PRTGMPPROBE__NAME=${PRTGMPPROBE__NAME:-"multi-platform-probe@$(hostname)"}
@@ -69,14 +79,6 @@ export PRTGMPPROBE__LOGGING__CONSOLE__LEVEL=${PRTGMPPROBE__LOGGING__CONSOLE__LEV
 export PRTGMPPROBE__LOGGING__CONSOLE__WITHOUT_TIME=${PRTGMPPROBE__LOGGING__CONSOLE__WITHOUT_TIME:-"true"}
 export PRTGMPPROBE__LOGGING__JOURNALD__LEVEL=${PRTGMPPROBE__LOGGING__JOURNALD__FIELD_PREFIX:-"off"}
 export PRTGMPPROBE__LOGGING__JOURNALD__FIELD_PREFIX=${PRTGMPPROBE__LOGGING__JOURNALD__FIELD_PREFIX:-"PRTGMPPROBE"}
-
-if [ ! -f "${PRTGMPPROBE__CONFIG_FILE}" ] ; then
-    error "Configuration file ${PRTGMPPROBE__CONFIG_FILE} does not exist. Please create one."
-    echo >&2 " "
-    echo >&2 "Example:"
-    ${PRTGMPPROBE__BINARY} example-config >&2
-    exit 1
-fi
 
 env | grep PRTGMPPROBE__ >&2
 

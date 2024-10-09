@@ -18,7 +18,7 @@ do
         ;;
     esac
 done
-if [ $_passthrough -neq 0 ] ; then
+if [ $_passthrough -ne 0 ] ; then
     exec gosu paessler_mpprobe:paessler_mpprobe \
         ${PRTGMPPROBE__BINARY} \
         "$@"
@@ -51,7 +51,7 @@ if [ ! -f "${PRTGMPPROBE__CONFIG_FILE}" ] ; then
 fi
 
 # Get/Generate a probe id from PRTGMPPROBE__ID_FILE or from PRTGMPPROBE__ID if not set in PRTGMPPROBE__CONFIG_FILE
-if [ ! grep -q "^id:" "${PRTGMPPROBE__CONFIG_FILE}" ] ; then
+if ! grep -q "^id:" "${PRTGMPPROBE__CONFIG_FILE}" ; then
     if [ -z "${PRTGMPPROBE__ID-}" ] ; then
         if [ ! -f "${PRTGMPPROBE__ID_FILE}" ] ; then
             cat /proc/sys/kernel/random/uuid > ${PRTGMPPROBE__ID_FILE} || (

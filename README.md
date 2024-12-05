@@ -91,8 +91,8 @@ You can also use the `/opt/paessler/share/scripts` volume for the scripts of the
 ```sh
 docker run -it \
   --network bridge \
-  -v ./scripts:/opt/paessler/share/scripts:ro \
-  -v ./config:/config \
+  -v $(pwd)/scripts:/opt/paessler/share/scripts:ro \
+  -v $(pwd)/config:/config \
   --cap-add NET_ADMIN \
   --cap-add NET_RAW \
   paessler/multi-platform-probe:latest

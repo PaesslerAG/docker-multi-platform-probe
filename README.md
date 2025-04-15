@@ -17,7 +17,7 @@ We recommend that you always update to the latest version of PRTG via the Auto-U
 Requires a [NATS server](#install-and-configure-a-nats-server) connection configured in PRTG.
 
  [prtg-96]: https://www.paessler.com/prtg/history/stable#24.2.96.1315
- [manual]: https://paessler.canto.global/direct/document/qvou34dmut1uh0gg6mqee3ip2k/K-e9xGiEiT58XzlH3s_Nf-B3lVk/original?content-type=application%2Fpdf&name=Multi-Platform+Probe+Manual.pdf
+ [manual]: https://manuals.paessler.com/multiplatformprobemanual.pdf
 
 ## How to use the multi-platform probe container
 
@@ -37,7 +37,7 @@ Paessler GmbH provides the **NATS Server for Paessler PRTG** Windows installer t
 * Configures the NATS server.
 * Installs and starts the NATS server service in the background.
 
-For the installer and step-by-step instructions on how to set up a NATS server on Windows, see section **Step 1: Install a NATS server** in the [Multi-Platform Probe for PRTG (PDF)][manual] manual.
+For the installer and step-by-step instructions on how to set up a NATS server on Windows, see section **Step 1: Install a NATS server** in the [Multi-Platform Probe for PRTG][manual] manual.
 
 ℹ️ If you want to deploy your NATS server on a non-Windows system, see the NATS documentation on their website.
 
@@ -46,7 +46,7 @@ For the installer and step-by-step instructions on how to set up a NATS server o
 Once you set up your NATS server, you must configure PRTG to accept connections to the NATS server.
 This is done from the PRTG web interface via **Setup** | **Cores & Probes** | **[Multi-Platform Probe Connection Settings][prtg-manual:cores]**.
 
-For step-by-step instructions on how to configure PRTG, see section **Step 2: Configure connection in PRTG** in the [Multi-Platform Probe for PRTG (PDF)][manual] manual.
+For step-by-step instructions on how to configure PRTG, see section **Step 2: Configure connection in PRTG** in the [Multi-Platform Probe for PRTG][manual] manual.
 
  [prtg-manual:cores]: https://www.paessler.com/manuals/prtg/core_and_probes#multi_platform_probe_connection
 

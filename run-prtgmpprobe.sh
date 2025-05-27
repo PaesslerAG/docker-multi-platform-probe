@@ -13,7 +13,7 @@ _passthrough=0
 for _arg in "$@"
 do
     case "$_arg" in
-        --help|example-config)
+        -h|--help|example-config|-V|--version)
             _passthrough=1
         ;;
     esac

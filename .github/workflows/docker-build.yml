@@ -4,6 +4,11 @@ name: Build and push # to docker registries
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - "main"
+    tags:
+      - "*"
   release:
     types: [published]
 

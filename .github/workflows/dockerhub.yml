@@ -3,8 +3,8 @@
 name: Push to Docker Hub
 
 on:
-  release:
-    types: [published]
+#  release:
+#    types: [published]
 
 env:
   IMAGE_NAME: paessler/multi-platform-probe

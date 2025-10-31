@@ -3,9 +3,9 @@
 name: Push to GitHub
 
 on:
-  push:
-    branches: ["main"]
-    tags: ["*"]
+#  push:
+#    branches: ["main"]
+#    tags: ["*"]
 
 env:
   REGISTRY: ghcr.io

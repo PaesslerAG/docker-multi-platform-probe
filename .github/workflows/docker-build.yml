@@ -8,7 +8,7 @@ on:
     types: [published]
 
 env:
-  IMAGE_NAME: paessler/multi-platform-probe
+  IMAGE_NAME: dselen/multi-platform-probe
 
 jobs:
   docker_build:
@@ -28,6 +28,18 @@ jobs:
           - name: ghcr
             registry: "ghcr.io"
     steps:
+      - name: Set image for Docker
+        id: set-image
+        run: |
+          if [ "${{ matrix.variant.name }}" = "ghcr" ]; then
+            echo "IMAGE_TO_USE=${GITHUB_REPOSITORY}" >> $GITHUB_ENV
+          elif [ "${{ matrix.variant.name }}" == "dockerhub" ]; then
+            echo "IMAGE_TO_USE=${IMAGE_NAME}" >> $GITHUB_ENV
+          else
+            echo "Failing to resolve."
+            exit 1
+          fi
+
       - name: Check out the repository
         uses: actions/checkout@v5
 
@@ -43,6 +55,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Log in to Docker Hub
+        if: matrix.variant.name == 'dockerhub'
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -50,6 +63,7 @@ jobs:
           registry: ${{ matrix.variant.registry }}
 
       - name: Log in to Github Container Registry
+        if: matrix.variant.name == 'ghcr'
         uses: docker/login-action@v3
         with:
           username: ${{ github.actor }}
@@ -60,9 +74,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: |
-            ${{ env.IMAGE_NAME }}
-            ${{ github.repository }}
+          images: ${{ matrix.variant.registry }}/${{ env.IMAGE_TO_USE }}
           tags: |
             type=ref,event=branch
             type=ref,event=tag
@@ -77,10 +89,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          platforms: |
-            - linux/amd64
-            - linux/arm64
-            - linux/arm/v7
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
 
       - name: Generate artifact attestation
         if: matrix.variant.name == 'dockerhub'
@@ -94,6 +103,6 @@ jobs:
         if: matrix.variant.name == 'ghcr'
         uses: actions/attest-build-provenance@v1
         with:
-          subject-name: ${{ matrix.variant.registry }}/${{ env.IMAGE_NAME }}
+          subject-name: ${{ matrix.variant.registry }}/${{ github.repository }}
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true

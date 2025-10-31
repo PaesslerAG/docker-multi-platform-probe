@@ -1,10 +1,11 @@
-FROM debian:11-slim
+FROM debian:13-slim
 
 LABEL org.opencontainers.image.authors="info@paessler.com"
 LABEL org.opencontainers.image.vendor="Paessler GmbH"
 LABEL org.opencontainers.image.licenses="MIT"
 
 ARG DEBIAN_FRONTEND=noninteractive
+ARG DEBIAN_FB_RELEASE=bookworm
 
 # enforce image to be up to date
 RUN \
@@ -21,7 +22,7 @@ RUN \
 # - libcap2-bin     (for setcap command)
 #
 RUN \
-    apt-get update \
+    apt-get update && apt-get full-upgrade \
     && apt-get -y install --no-install-recommends --no-install-suggests \
         ca-certificates \
         python3-minimal \
@@ -29,13 +30,15 @@ RUN \
         libcap2-bin \
     && apt-get clean
 
-# add paessler's official package repository
+# Add Paessler's official package repository with current release specifications.
+# If the current release is not present on Paessler's servers fallback to defined fallback release.
 RUN \
-    apt-get update \
+    apt-get -qq update \
     && apt-get -y install --no-install-recommends --no-install-suggests \
         curl \
-    && curl --fail --silent https://packages.paessler.com/keys/paessler.asc > /usr/share/keyrings/paessler-archive-keyring.asc \
-    && curl --fail --silent https://packages.paessler.com/docs/apt-sources/$(. /etc/os-release && echo $VERSION_CODENAME).sources > /etc/apt/sources.list.d/paessler.sources \
+    && curl --fail https://packages.paessler.com/keys/paessler.asc > /usr/share/keyrings/paessler-archive-keyring.asc \
+    && curl --fail https://packages.paessler.com/docs/apt-sources/$(. /etc/os-release && $VERSION_CODENAME).sources \
+    || curl --fail https://packages.paessler.com/docs/apt-sources/${DEBIAN_FB_RELEASE}.sources > /etc/apt/sources.list.d/paessler.sources \
     && apt-get -y remove --purge curl \
     && apt-get clean
 
@@ -44,10 +47,11 @@ RUN \
     apt-get update \
     && apt-get -y install --no-install-recommends --no-install-suggests \
         prtgmpprobe \
+    && apt-get autoremove -y \
     && apt-get clean
 
 # add entrypoint script
-COPY --chown=root:root --chmod=0555 run-prtgmpprobe.sh /run-prtgmpprobe.sh
+COPY --chown=root:root --chmod=0555 run-prtgmpprobe.sh /entrypoint.sh
 
 # specify volumes:
 # - /config : configuration directory for the prtgmpprobe, put your config.yml here.
@@ -57,5 +61,5 @@ VOLUME [ "/config", "/opt/paessler/share/scripts" ]
 # set WORKDIR to a sane default
 WORKDIR /
 
-ENTRYPOINT [ "/run-prtgmpprobe.sh" ]
+ENTRYPOINT [ "/entrypoint.sh" ]
 CMD [ "service-run" ]

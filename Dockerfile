@@ -6,6 +6,14 @@ LABEL org.opencontainers.image.licenses="MIT"
 
 ARG DEBIAN_FRONTEND=noninteractive
 
+# Pre-create the probe user with a preset but overridable UID/GID
+ARG PRTGMPPROBE__LINUX_UID=999
+ARG PRTGMPPROBE__LINUX_GID=999
+RUN groupadd --system --gid "${PRTGMPPROBE__LINUX_GID}" paessler_mpprobe \
+ && useradd --system --uid "${PRTGMPPROBE__LINUX_UID}" \
+      --gid paessler_mpprobe --home-dir /var/opt/paessler/mpprobe \
+      --shell /usr/sbin/nologin --no-create-home paessler_mpprobe
+
 # enforce image to be up to date
 RUN \
     apt-get update \

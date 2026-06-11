@@ -129,6 +129,8 @@ While the container provides some defaults, we recommend that you change the fol
 | -- | -- | -- |
 | `PRTGMPPROBE__NAME` | The name of the object shown in PRTG. | `multi-platform-probe@$(hostname)` |
 | `PRTGMPPROBE__ID` | The GID of the multi-platform probe. This must be a valid UUIDv4. The container automatically generates the GID when you create it and stores the GID in the `/config` volume. If you want to ensure that you always get the same UUIDv4, then we recommend that you use `uuidgen(1)` with a unique DNS string for your container, e.g. `uuidgen --namespace @dns --name com.paesslerfans.containers.acme --sha1`. | Randomly generated on the first run. |
+| `PRTGMPPROBE__LINUX_UID` | The Linux User ID for `paessler_mpprobe` that service runs as and files are owned by. | `999` |
+| `PRTGMPPROBE__LINUX_GID` | The Linux Group ID for `paessler_mpprobe` that service runs as and files are owned by. | `999` |
 
 ## Feedback and issues
 
